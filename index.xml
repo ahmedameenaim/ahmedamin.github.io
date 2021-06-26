@@ -9,10 +9,30 @@
     <description>Recent content on Hello Friend</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 26 Jun 2021 19:28:29 +0200</lastBuildDate>
+    <lastBuildDate>Sun, 27 Jun 2021 00:53:51 +0200</lastBuildDate>
     
 	<atom:link href="https://ahmedameenaim.github.io/ahmedamin.github.io/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Containers attacks - ways of escape container</title>
+      <link>https://ahmedameenaim.github.io/ahmedamin.github.io/posts/post3/</link>
+      <pubDate>Sun, 27 Jun 2021 00:53:51 +0200</pubDate>
+      
+      <guid>https://ahmedameenaim.github.io/ahmedamin.github.io/posts/post3/</guid>
+      <description>
+        
+          &lt;img src=&#34;https://ahmedameenaim.github.io/ahmedamin.github.io/amcO9glU.jpg&#34;/&gt;
+          
+        
+        
+        
+          This post is I&amp;rsquo;m talking about container security topic , it&amp;rsquo;s demonstrate how a vulnerable application in dockerize environment can be critical catastrophic to enterprises.
+Introduction Container technology has radically changed the way that applications are being developed and deployed. Notably, containers dramatically ease dependency management, so shipping new features or code is faster than ever before. While Docker containers and Kubernetes are great for DevOps, they also present new security challenges that both security practitioners and developers must understand and address with diligence.
+          
+        
+        </description>
+    </item>
     
     <item>
       <title>Istio Security (securing microservices traffic with istio)</title>

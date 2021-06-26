@@ -226,7 +226,7 @@ So What is Istio ? Istio is a service mesh that allows organizations to connect,
 </ul>
 <h2 id="securing-service-to-service-communication-with-mutual-tls">Securing Service-to-Service Communication with Mutual TLS.</h2>
 <p>Istio uses the Envoy’s sidecar proxy for kind of this operations and to intercept the network as we can see the diagram below.</p>
-<p><img src="https://ahmedameenaim.github.io/ahmedamin.github.io/diagram.jpg" alt="diagram.jpg"></p>
+<p><img src="//localhost:1313/diagram.jpg" alt="diagram.jpg"></p>
 <p>Mutual TLS authentication makes the traffic secure and reliable in both client and server directions.</p>
 <h2 id="understanding-how-mutual-tls-works-with-istio">Understanding how mutual TLS works with Istio.</h2>
 <p>TLS, a protocol designed to provide secure communication between apps, supports many algorithms to exchange keys and verify message integrity, and various ciphers to encrypt messages. As the number of services scales across multiple deployments, securing them properly can be a daunting task.</p>
@@ -254,7 +254,7 @@ So What is Istio ? Istio is a service mesh that allows organizations to connect,
 <p>The name Kubernetes originates from Greek, meaning helmsman or pilot. Google open-sourced the Kubernetes project in 2014. &gt; Kubernetes combines over 15 years of Google&rsquo;s experience running production workloads at scale with best-of-breed ideas and &gt; practices from the community.   <strong>Source — kubernetes.io</strong></p>
 </blockquote>
 <p>In this scenario we have an infrastructure deployed with two services in namespace called deprecated without side-car proxy (Enovy) injected and the network traffic between them is in fully plain HTTP.</p>
-<p><img src="https://ahmedameenaim.github.io/ahmedamin.github.io/cluster1.png" alt="cluster1.png"></p>
+<p><img src="//localhost:1313/cluster1.png" alt="cluster1.png"></p>
 <h2 id="automatic-sidecar-injection">Automatic sidecar injection</h2>
 <p>we need to make default namespace enabled with automated enovy side-car injection so the deployed services within its can leverage istio capabilities.</p>
 <p>Sidecars can be automatically added to applicable Kubernetes pods using a mutating webhook admission controller provided by Istio.When we set the istio-injection=enabled label on a namespace and the injection webhook is enabled, any new pods that are created in that namespace will automatically have a sidecar added to them.</p>
@@ -374,9 +374,9 @@ deployment.apps/httpbin created
 serviceaccount/sleep created
 service/sleep created
 deployment.apps/sleep created
-</code></pre></div><p><img src="https://ahmedameenaim.github.io/ahmedamin.github.io/cluster2.png" alt="cluster2.png"></p>
+</code></pre></div><p><img src="//localhost:1313/cluster2.png" alt="cluster2.png"></p>
 <p>we can notice the difference between services between namespace deprecated and default , that is the deploying services in default namespace has been injected with container enovy-proxy side-car.</p>
-<p><img src="https://ahmedameenaim.github.io/ahmedamin.github.io/cluster3.png" alt="cluster2.png"></p>
+<p><img src="//localhost:1313/cluster3.png" alt="cluster2.png"></p>
 <p>we can verify setup by sending an HTTP request with curl from any sleep pod in the namespace default or deprecated to either httpbin.default, httpbin.deprecated. All requests should succeed with HTTP code 200.</p>
 <p>For example, here is a command to check sleep.default to httpbin.deprecated reachability:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">kubectl exec <span style="color:#e6db74">&#34;</span><span style="color:#66d9ef">$(</span>kubectl get pod -l app<span style="color:#f92672">=</span>sleep -n default -o jsonpath<span style="color:#f92672">={</span>.items..metadata.name<span style="color:#f92672">}</span><span style="color:#66d9ef">)</span><span style="color:#e6db74">&#34;</span> -c sleep -n default -- curl http://httpbin.deprecated:8000/ip -s -o /dev/null -w <span style="color:#e6db74">&#34;%{http_code}\n&#34;</span>
@@ -544,6 +544,13 @@ command terminated with exit code <span style="color:#ae81ff">56</span>
             <hr />
           </div>
           <div class="pagination__buttons">
+            
+              <span class="button previous">
+                <a href="https://ahmedameenaim.github.io/ahmedamin.github.io/posts/post3/">
+                  <span class="button__icon">←</span>
+                  <span class="button__text">Containers attacks - ways of escape container</span>
+                </a>
+              </span>
             
             
               <span class="button next">
