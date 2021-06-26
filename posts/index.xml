@@ -34,5 +34,25 @@ So What is Istio ? Istio is a service mesh that allows organizations to connect,
         </description>
     </item>
     
+    <item>
+      <title>Browny Machine Writeup (easy)</title>
+      <link>https://ahmedameenaim.github.io/ahmedamin.github.io/posts/writeup1/</link>
+      <pubDate>Sun, 28 Apr 2019 01:12:17 +0200</pubDate>
+      
+      <guid>https://ahmedameenaim.github.io/ahmedamin.github.io/posts/writeup1/</guid>
+      <description>
+        
+          &lt;img src=&#34;https://ahmedameenaim.github.io/ahmedamin.github.io/cover.jpg&#34;/&gt;
+          
+        
+        
+        
+          ======================
+Hey guys , today I will walkthrough step by step in Browny Machine. this Machine is so good for beginner in pentration testing you will gonna learn a lot in this experenice. It is an easy linux machine , We will exploit Xplico Remote Code Execution in a vulnerable version Xplico that listen on port 9876 by default. There is a hidden end-point at inside of the Xplico that allow anyone to create a new user that can execute a terminal command under the context of the root user.
+          
+        
+        </description>
+    </item>
+    
   </channel>
 </rss>
