@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Posts on Hello Friend</title>
-    <link>https://ahmedameenaim.github.io/username.github.io/posts/</link>
+    <link>https://ahmedameenaim.github.io/ahmedamin.github.io/posts/</link>
     <description>Recent content in Posts on Hello Friend</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sun, 28 Apr 2019 01:12:17 +0200</lastBuildDate>
     
-	<atom:link href="https://ahmedameenaim.github.io/username.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://ahmedameenaim.github.io/ahmedamin.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Browny Machine Writeup (easy)</title>
-      <link>https://ahmedameenaim.github.io/username.github.io/posts/writeup1/</link>
+      <link>https://ahmedameenaim.github.io/ahmedamin.github.io/posts/writeup1/</link>
       <pubDate>Sun, 28 Apr 2019 01:12:17 +0200</pubDate>
       
-      <guid>https://ahmedameenaim.github.io/username.github.io/posts/writeup1/</guid>
+      <guid>https://ahmedameenaim.github.io/ahmedamin.github.io/posts/writeup1/</guid>
       <description>====================== Quick Summary
 Hey guys , today I will walkthrough step by step in Browny Machine. this Machine is so good for beginner in pentration testing you will gonna learn a lot in this experenice. It is an easy linux machine , We will exploit Xplico Remote Code Execution in a vulnerable version Xplico that listen on port 9876 by default. There is a hidden end-point at inside of the Xplico that allow anyone to create a new user that can execute a terminal command under the context of the root user.</description>
     </item>
