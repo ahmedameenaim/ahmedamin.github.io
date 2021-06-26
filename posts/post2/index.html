@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    
+      <title>
+        Istio Security (securing microservices traffic with istio) ::
+        Hello Friend — A simple theme for Hugo
+      </title>
+    
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta
+  name="description"
+  content="In this post I&amp;rsquo;m gonna talking about how to secure your micro-services in service mesh using istio. Prefer if the reader have a foundation knowledge of kubernetes but it&amp;rsquo;s not mandatory at all.
+So What is Istio ? Istio is a service mesh that allows organizations to connect, secure and observe microservices. Since its inception three years ago, it’s risen to become one of Google’s most prominent open source projects, a top-three keyword at KubeCon, and a mature, production-ready offering supported by a robust community."
+/>
+<meta
+  name="keywords"
+  content=""
+/>
+<meta name="robots" content="noodp" />
+<link rel="canonical" href="https://ahmedameenaim.github.io/ahmedamin.github.io/posts/post2/" />
+
+
+
+
+
+<link rel="stylesheet" href="https://ahmedameenaim.github.io/ahmedamin.github.io/assets/style.css" />
+
+<link rel="stylesheet" href="https://ahmedameenaim.github.io/ahmedamin.github.io/style.css" />
+
+
+<link
+  rel="apple-touch-icon-precomposed"
+  sizes="144x144"
+  href="https://ahmedameenaim.github.io/ahmedamin.github.io/img/apple-touch-icon-144-precomposed.png"
+/>
+<link rel="shortcut icon" href="https://ahmedameenaim.github.io/ahmedamin.github.io/img/favicon.png" />
+
+
+<link href="https://ahmedameenaim.github.io/ahmedamin.github.io/assets/fonts/Inter-Italic.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="https://ahmedameenaim.github.io/ahmedamin.github.io/assets/fonts/Inter-Regular.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="https://ahmedameenaim.github.io/ahmedamin.github.io/assets/fonts/Inter-Medium.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="https://ahmedameenaim.github.io/ahmedamin.github.io/assets/fonts/Inter-MediumItalic.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="https://ahmedameenaim.github.io/ahmedamin.github.io/assets/fonts/Inter-Bold.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="https://ahmedameenaim.github.io/ahmedamin.github.io/assets/fonts/Inter-BoldItalic.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Istio Security (securing microservices traffic with istio)"/>
+<meta name="twitter:description" content="In this post I&rsquo;m gonna talking about how to secure your micro-services in service mesh using istio. Prefer if the reader have a foundation knowledge of kubernetes but it&rsquo;s not mandatory at all.
+So What is Istio ? Istio is a service mesh that allows organizations to connect, secure and observe microservices. Since its inception three years ago, it’s risen to become one of Google’s most prominent open source projects, a top-three keyword at KubeCon, and a mature, production-ready offering supported by a robust community."/>
+
+
+
+<meta property="og:title" content="Istio Security (securing microservices traffic with istio)" />
+<meta property="og:description" content="In this post I&rsquo;m gonna talking about how to secure your micro-services in service mesh using istio. Prefer if the reader have a foundation knowledge of kubernetes but it&rsquo;s not mandatory at all.
+So What is Istio ? Istio is a service mesh that allows organizations to connect, secure and observe microservices. Since its inception three years ago, it’s risen to become one of Google’s most prominent open source projects, a top-three keyword at KubeCon, and a mature, production-ready offering supported by a robust community." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://ahmedameenaim.github.io/ahmedamin.github.io/posts/post2/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2021-06-26T19:28:29&#43;02:00" />
+<meta property="article:modified_time" content="2021-06-26T19:28:29&#43;02:00" /><meta property="og:site_name" content="Hello Friend" />
+
+
+
+
+
+
+
+  </head>
+  <body class="dark-theme">
+    <div class="container">
+      <header class="header">
+  <span class="header__inner">
+    <a
+  href="https://ahmedameenaim.github.io/ahmedamin.github.io"
+  class="logo"
+  style="text-decoration: none;"
+>
+  
+    <span class="logo__mark"><svg xmlns="http://www.w3.org/2000/svg" class="greater-icon" viewBox="0 0 44 44">
+  <path fill="none" d="M15 8l14.729 14.382L15 35.367" />
+</svg>
+</span>
+    <span class="logo__text"
+      >Welcome to the Rabbit Hole</span
+    >
+    <span class="logo__cursor"></span>
+  
+</a>
+
+    <span class="header__right">
+      
+        <nav class="menu">
+  <ul class="menu__inner menu__inner--desktop">
+    
+      
+        
+          <li><a href="/ahmedamin.github.io/about">About</a></li>
+        
+      
+        
+          <li><a href="/ahmedamin.github.io/showcase">Showcase</a></li>
+        
+      
+      
+      
+  </ul>
+
+  <ul class="menu__inner menu__inner--mobile">
+    
+      
+        <li><a href="/ahmedamin.github.io/about">About</a></li>
+      
+    
+      
+        <li><a href="/ahmedamin.github.io/showcase">Showcase</a></li>
+      
+    
+  </ul>
+</nav>
+
+        <span class="menu-trigger">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M0 0h24v24H0z" fill="none" />
+            <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
+          </svg>
+        </span>
+      
+      <span class="theme-toggle">
+        <svg
+  class="theme-toggler"
+  width="24"
+  height="24"
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <path
+    d="M22 41C32.4934 41 41 32.4934 41 22C41 11.5066 32.4934 3 22
+  3C11.5066 3 3 11.5066 3 22C3 32.4934 11.5066 41 22 41ZM7 22C7
+  13.7157 13.7157 7 22 7V37C13.7157 37 7 30.2843 7 22Z"
+  />
+</svg>
+
+      </span>
+    </span>
+  </span>
+</header>
+
+
+      <div class="content">
+        
+  
+  
+
+  <div class="post">
+    <h1 class="post-title">Istio Security (securing microservices traffic with istio)</h1>
+    <div class="post-meta">
+      
+        <span class="post-date">
+          2021-06-26
+        </span>
+
+        
+          
+        
+      
+
+      
+        <span class="post-author"
+          >— Written by Ahmed Amin</span
+        >
+
+
+      
+        <span class="post-read-time"
+          >— 14 min read</span
+        >
+      
+    </div>
+
+    
+
+    
+      <figure class="post-cover">
+        
+          <img src="https://ahmedameenaim.github.io/ahmedamin.github.io/istio-cover.png" alt="Istio Security (securing microservices traffic with istio)" />
+        
+
+        
+      </figure>
+    
+
+    <div class="post-content">
+      
+      <p>In this post I&rsquo;m gonna talking about how to secure your micro-services in service mesh using istio. Prefer if the reader have a foundation knowledge of kubernetes but it&rsquo;s not mandatory at all.</p>
+<h2 id="so-what-is-istio-">So What is Istio ?</h2>
+<p>Istio is a service mesh that allows organizations to connect, secure and observe microservices. Since its inception three years ago, it’s risen to become one of Google’s most prominent open source projects, a top-three keyword at KubeCon, and a mature, production-ready offering supported by a robust community.</p>
+<p>Solutions built on a microservices-based architecture help solve the problem of breaking down complex tasks into manageable portions that can be built and deployed independently. However, managing a growing set of microservices across different business units within organizations can quickly become a huge headache, if not done well. A service mesh framework like Istio provides the following advanced features to help improve availability and resiliency:</p>
+<ul>
+<li>Observability through rich tracing, monitoring, and logging of services.</li>
+<li>Traffic management through timeouts, retries.</li>
+<li>Paths for safe upgrades through canary rollouts and A/B testing.</li>
+<li>Automatically secured services by enabling end user and transport authentication, authorization, and audit capabilities.</li>
+</ul>
+<p>However, microservices also have particular security needs:</p>
+<ul>
+<li>To defend against man-in-the-middle attacks, they need traffic encryption.</li>
+<li>To provide flexible service access control, they need mutual TLS and fine-grained access policies.</li>
+<li>To determine who did what at what time, they need auditing tools</li>
+</ul>
+<p>The goals of Istio security are:</p>
+<ul>
+<li>Security by default: no changes needed to application code and infrastructure</li>
+<li>Defense in depth: integrate with existing security systems to provide multiple layers of defense</li>
+<li>Zero-trust network: build security solutions on distrusted networks</li>
+</ul>
+<p>One of the main challenges of managing microservices-based solutions is how to properly secure not just the microservices themselves but also the communication between them.</p>
+<p>In this tutorial we focus on how Istio manages security within a service mesh, specifically on how to use mutual transport layer security (TLS) to secure communication between services.</p>
+<p>Although our microservices work in internal environments that we generally accept as secure, making the communication between microservices encrypted will be to our advantage for all kinds of security issues.</p>
+<p>Well, in the context of security, istio supports two different authentication methods.</p>
+<ul>
+<li>Transport authentication (mTLS) for service-to-service communication.</li>
+<li>End-user authentication with JTW for client-to-service communication.</li>
+</ul>
+<h2 id="securing-service-to-service-communication-with-mutual-tls">Securing Service-to-Service Communication with Mutual TLS.</h2>
+<p>Istio uses the Envoy’s sidecar proxy for kind of this operations and to intercept the network as we can see the diagram below.</p>
+<p><img src="//localhost:1313/diagram.jpg" alt="diagram.jpg"></p>
+<p>Mutual TLS authentication makes the traffic secure and reliable in both client and server directions.</p>
+<h2 id="understanding-how-mutual-tls-works-with-istio">Understanding how mutual TLS works with Istio.</h2>
+<p>TLS, a protocol designed to provide secure communication between apps, supports many algorithms to exchange keys and verify message integrity, and various ciphers to encrypt messages. As the number of services scales across multiple deployments, securing them properly can be a daunting task.</p>
+<p>Istio completely shifts the burden of configuring security for each individual service away from developers as you don&rsquo;t have to change any part of application code when it&rsquo;s comes to develop a security feature to protect your services. Istio’s Citadel component (and other components like Envoy sidecar proxies, Pilot and Mixer) manages all the parts and pieces of securing the services in a service mesh. Istio supports mutual TLS, which validates the identify of both the client and the server services.</p>
+<p>The Citadel component in Istio manages the lifecycle of keys and certificates issued for services. When Istio establishes mutual TLS authentication, it uses these keys and certificates to exchange the identities of services. To establish a mutual TLS connection between two services, the envoy proxy on the client side establishes a mutual TLS handshake with the envoy proxy on the server side during which the client side envoy proxy verifies the identity of the server side and whether it is authorized to run the target service. When the identities of the services are verified, the mutual TLS connection is established and the client service sends communication through the client side proxy to the server side proxy and finally to the target service.</p>
+<h2 id="mutual-tls-authentication">Mutual TLS authentication</h2>
+<p>Istio tunnels service-to-service communication through the client- and server-side PEPs, which are implemented as Envoy proxies. When a workload sends a request to another workload using mutual TLS authentication, the request is handled as follows:</p>
+<ol>
+<li>
+<p>Istio re-routes the outbound traffic from a client to the client’s local sidecar Envoy.</p>
+</li>
+<li>
+<p>The client side Envoy starts a mutual TLS handshake with the server side Envoy. During the handshake, the client side Envoy also does a secure naming check to verify that the service account presented in the server certificate is authorized to run the target service.</p>
+</li>
+<li>
+<p>The client side Envoy and the server side Envoy establish a mutual TLS connection, and Istio forwards the traffic from the      client side Envoy to the server side Envoy.</p>
+</li>
+<li>
+<p>After authorization, the server side Envoy forwards the traffic to the server service through local TCP connections.</p>
+</li>
+</ol>
+<h4 id="first-of-all-what-it-is-kubernetes-">First of all what it is kubernetes ?</h4>
+<blockquote>
+<p>Kubernetes is a portable, extensible, open-source platform for managing containerized workloads and services, that facilitates both declarative configuration and automation. It has a large, rapidly growing ecosystem. Kubernetes services, support, and tools are widely available.</p>
+<p>The name Kubernetes originates from Greek, meaning helmsman or pilot. Google open-sourced the Kubernetes project in 2014. &gt; Kubernetes combines over 15 years of Google&rsquo;s experience running production workloads at scale with best-of-breed ideas and &gt; practices from the community.   <strong>Source — kubernetes.io</strong></p>
+</blockquote>
+<p>In this scenario we have an infrastructure deployed with two services in namespace called deprecated without side-car proxy (Enovy) injected and the network traffic between them is in fully plain HTTP.</p>
+<p><img src="//localhost:1313/cluster1.png" alt="cluster1.png"></p>
+<h2 id="automatic-sidecar-injection">Automatic sidecar injection</h2>
+<p>we need to make default namespace enabled with automated enovy side-car injection so the deployed services within its can leverage istio capabilities.</p>
+<p>Sidecars can be automatically added to applicable Kubernetes pods using a mutating webhook admission controller provided by Istio.When we set the istio-injection=enabled label on a namespace and the injection webhook is enabled, any new pods that are created in that namespace will automatically have a sidecar added to them.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">kubectl label namespace default istio-injection<span style="color:#f92672">=</span>enabled
+kubectl get namespace -L istio-injection
+
+NAME              STATUS   AGE     ISTIO-INJECTION
+default           Active   9d         enabled
+deprecated        Active   6h20m   
+istio-system      Active   9d        disabled
+kube-node-lease   Active   9d      
+kube-public       Active   9d      
+kube-system       Active   9d
+</code></pre></div><p>then we deploy the httpbin , sleep services in default namespace.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#75715e">##################################################################################################</span>
+<span style="color:#75715e"># httpbin service</span>
+<span style="color:#75715e">##################################################################################################</span>
+<span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+<span style="color:#f92672">kind</span>: <span style="color:#ae81ff">ServiceAccount</span>
+<span style="color:#f92672">metadata</span>:
+  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">httpbin</span>
+---
+<span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+<span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Service</span>
+<span style="color:#f92672">metadata</span>:
+  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">httpbin</span>
+  <span style="color:#f92672">labels</span>:
+    <span style="color:#f92672">app</span>: <span style="color:#ae81ff">httpbin</span>
+    <span style="color:#f92672">service</span>: <span style="color:#ae81ff">httpbin</span>
+<span style="color:#f92672">spec</span>:
+  <span style="color:#f92672">ports</span>:
+  - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">http</span>
+    <span style="color:#f92672">port</span>: <span style="color:#ae81ff">8000</span>
+    <span style="color:#f92672">targetPort</span>: <span style="color:#ae81ff">80</span>
+  <span style="color:#f92672">selector</span>:
+    <span style="color:#f92672">app</span>: <span style="color:#ae81ff">httpbin</span>
+---
+<span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">apps/v1</span>
+<span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Deployment</span>
+<span style="color:#f92672">metadata</span>:
+  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">httpbin</span>
+<span style="color:#f92672">spec</span>:
+  <span style="color:#f92672">replicas</span>: <span style="color:#ae81ff">1</span>
+  <span style="color:#f92672">selector</span>:
+    <span style="color:#f92672">matchLabels</span>:
+      <span style="color:#f92672">app</span>: <span style="color:#ae81ff">httpbin</span>
+      <span style="color:#f92672">version</span>: <span style="color:#ae81ff">v1</span>
+  <span style="color:#f92672">template</span>:
+    <span style="color:#f92672">metadata</span>:
+      <span style="color:#f92672">labels</span>:
+        <span style="color:#f92672">app</span>: <span style="color:#ae81ff">httpbin</span>
+        <span style="color:#f92672">version</span>: <span style="color:#ae81ff">v1</span>
+    <span style="color:#f92672">spec</span>:
+      <span style="color:#f92672">serviceAccountName</span>: <span style="color:#ae81ff">httpbin</span>
+      <span style="color:#f92672">containers</span>:
+      - <span style="color:#f92672">image</span>: <span style="color:#ae81ff">docker.io/kennethreitz/httpbin</span>
+        <span style="color:#f92672">imagePullPolicy</span>: <span style="color:#ae81ff">IfNotPresent</span>
+        <span style="color:#f92672">name</span>: <span style="color:#ae81ff">httpbin</span>
+        <span style="color:#f92672">ports</span>:
+        - <span style="color:#f92672">containerPort</span>: <span style="color:#ae81ff">80</span>
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">kubectl apply -f httpbin/httpbin.yaml  
+serviceaccount/httpbin created
+service/httpbin created
+deployment.apps/httpbin created
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#75715e">##################################################################################################</span>
+<span style="color:#75715e"># Sleep service</span>
+<span style="color:#75715e">##################################################################################################</span>
+<span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+<span style="color:#f92672">kind</span>: <span style="color:#ae81ff">ServiceAccount</span>
+<span style="color:#f92672">metadata</span>:
+  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">sleep</span>
+---
+<span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+<span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Service</span>
+<span style="color:#f92672">metadata</span>:
+  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">sleep</span>
+  <span style="color:#f92672">labels</span>:
+    <span style="color:#f92672">app</span>: <span style="color:#ae81ff">sleep</span>
+    <span style="color:#f92672">service</span>: <span style="color:#ae81ff">sleep</span>
+<span style="color:#f92672">spec</span>:
+  <span style="color:#f92672">ports</span>:
+  - <span style="color:#f92672">port</span>: <span style="color:#ae81ff">80</span>
+    <span style="color:#f92672">name</span>: <span style="color:#ae81ff">http</span>
+  <span style="color:#f92672">selector</span>:
+    <span style="color:#f92672">app</span>: <span style="color:#ae81ff">sleep</span>
+---
+<span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">apps/v1</span>
+<span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Deployment</span>
+<span style="color:#f92672">metadata</span>:
+  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">sleep</span>
+<span style="color:#f92672">spec</span>:
+  <span style="color:#f92672">replicas</span>: <span style="color:#ae81ff">1</span>
+  <span style="color:#f92672">selector</span>:
+    <span style="color:#f92672">matchLabels</span>:
+      <span style="color:#f92672">app</span>: <span style="color:#ae81ff">sleep</span>
+  <span style="color:#f92672">template</span>:
+    <span style="color:#f92672">metadata</span>:
+      <span style="color:#f92672">labels</span>:
+        <span style="color:#f92672">app</span>: <span style="color:#ae81ff">sleep</span>
+    <span style="color:#f92672">spec</span>:
+      <span style="color:#f92672">serviceAccountName</span>: <span style="color:#ae81ff">sleep</span>
+      <span style="color:#f92672">containers</span>:
+      - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">sleep</span>
+        <span style="color:#f92672">image</span>: <span style="color:#ae81ff">governmentpaas/curl-ssl</span>
+        <span style="color:#f92672">command</span>: [<span style="color:#e6db74">&#34;/bin/sleep&#34;</span>, <span style="color:#e6db74">&#34;3650d&#34;</span>]
+        <span style="color:#f92672">imagePullPolicy</span>: <span style="color:#ae81ff">IfNotPresent</span>
+        <span style="color:#f92672">volumeMounts</span>:
+        - <span style="color:#f92672">mountPath</span>: <span style="color:#ae81ff">/etc/sleep/tls</span>
+          <span style="color:#f92672">name</span>: <span style="color:#ae81ff">secret-volume</span>
+      <span style="color:#f92672">volumes</span>:
+      - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">secret-volume</span>
+        <span style="color:#f92672">secret</span>:
+          <span style="color:#f92672">secretName</span>: <span style="color:#ae81ff">sleep-secret</span>
+          <span style="color:#f92672">optional</span>: <span style="color:#66d9ef">true</span>
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">kubectl apply -f sleep/sleep.yaml
+
+serviceaccount/sleep created
+service/sleep created
+deployment.apps/sleep created
+</code></pre></div><p><img src="//localhost:1313/cluster2.png" alt="cluster2.png"></p>
+<p>we can notice the difference between services between namespace deprecated and default , that is the deploying services in default namespace has been injected with container enovy-proxy side-car.</p>
+<p><img src="//localhost:1313/cluster3.png" alt="cluster2.png"></p>
+<p>we can verify setup by sending an HTTP request with curl from any sleep pod in the namespace default or deprecated to either httpbin.default, httpbin.deprecated. All requests should succeed with HTTP code 200.</p>
+<p>For example, here is a command to check sleep.default to httpbin.deprecated reachability:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">kubectl exec <span style="color:#e6db74">&#34;</span><span style="color:#66d9ef">$(</span>kubectl get pod -l app<span style="color:#f92672">=</span>sleep -n default -o jsonpath<span style="color:#f92672">={</span>.items..metadata.name<span style="color:#f92672">}</span><span style="color:#66d9ef">)</span><span style="color:#e6db74">&#34;</span> -c sleep -n default -- curl http://httpbin.deprecated:8000/ip -s -o /dev/null -w <span style="color:#e6db74">&#34;%{http_code}\n&#34;</span>
+
+<span style="color:#ae81ff">200</span>
+</code></pre></div><p>one-liner command conveniently iterates through all reachability combinations:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#66d9ef">for</span> from in <span style="color:#e6db74">&#34;deprecated&#34;</span> <span style="color:#e6db74">&#34;default&#34;</span>; <span style="color:#66d9ef">do</span> <span style="color:#66d9ef">for</span> to in <span style="color:#e6db74">&#34;deprecated&#34;</span> <span style="color:#e6db74">&#34;default&#34;</span>; <span style="color:#66d9ef">do</span> kubectl exec <span style="color:#e6db74">&#34;</span><span style="color:#66d9ef">$(</span>kubectl get pod -l app<span style="color:#f92672">=</span>sleep -n <span style="color:#e6db74">${</span>from<span style="color:#e6db74">}</span> -o jsonpath<span style="color:#f92672">={</span>.items..metadata.name<span style="color:#f92672">}</span><span style="color:#66d9ef">)</span><span style="color:#e6db74">&#34;</span> -c sleep -n <span style="color:#e6db74">${</span>from<span style="color:#e6db74">}</span> -- curl <span style="color:#e6db74">&#34;http://httpbin.</span><span style="color:#e6db74">${</span>to<span style="color:#e6db74">}</span><span style="color:#e6db74">:8000/ip&#34;</span> -s -o /dev/null -w <span style="color:#e6db74">&#34;sleep.</span><span style="color:#e6db74">${</span>from<span style="color:#e6db74">}</span><span style="color:#e6db74"> to httpbin.</span><span style="color:#e6db74">${</span>to<span style="color:#e6db74">}</span><span style="color:#e6db74">: %{http_code}\n&#34;</span>; <span style="color:#66d9ef">done</span>; <span style="color:#66d9ef">done</span>
+
+sleep.deprecated to httpbin.deprecated: <span style="color:#ae81ff">200</span>
+sleep.deprecated to httpbin.default: <span style="color:#ae81ff">200</span>
+sleep.default to httpbin.deprecated: <span style="color:#ae81ff">200</span>
+sleep.default to httpbin.default: <span style="color:#ae81ff">200</span>
+</code></pre></div><p>Services use authentication policies to define the kind of requests that a service receives, whether it is encrypted using mutual TLS or plain text. Istio uses these authentication policies, along with service identities and service name checks, to establish mutual TLS connection between services. The authentication policies and <a href="https://istio.io/latest/docs/concepts/security/#secure-naming" title="istio">secure naming</a> information is distributed to the Envoy proxies by the Pilot component. The Mixer component handles the authorization and auditing part of Istio security.</p>
+<p>The process of enabling mutual TLS connections between services in Istio. We need to define a Policy object and DestinationRule object. we use a Policy object (also called an authentication policy) to define what kind of requests a service receives. A DestinationRule object applies to the traffic that is destined for a target service. It tells the client services whether to send encrypted traffic to the target service or to send plain-text requests.</p>
+<p>To enable a mutual TLS connection between services, we need to define a Policy object and a DestinationRule object. However in the Istio 1.4+, a new automatic mutual TLS feature was added. If you turn on this setting, services are automatically enabled with mutual TLS, and you only need to specify a Policy object (a DestinationRule object is not needed). However, this post details how to define the Policy object and a DestinationRule object to enable mutual TLS between services.</p>
+<h2 id="authentication-policies-peer-authentication">Authentication policies (Peer Authentication)</h2>
+<p>Authentication policies apply to requests that a service receives. To specify client-side authentication rules in mutual TLS.</p>
+<p>Peer authentication policies specify the mutual TLS mode Istio enforces on target workloads.The following modes are supported:</p>
+<ul>
+<li>PERMISSIVE: Workloads accept both mutual TLS and plain text traffic. This mode is most useful during migrations when workloads without sidecar cannot use mutual TLS. Once workloads are migrated with sidecar injection, you should switch the mode to STRICT.</li>
+<li>STRICT: Workloads only accept mutual TLS traffic.</li>
+<li>DISABLE: Mutual TLS is disabled. From a security perspective, you shouldn’t use this mode unless you provide your own security solution.
+Verify there is no peer authentication policy in the system with the following command:</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">kubectl get peerauthentication --all-namespaces
+
+No resources found.
+</code></pre></div><p>Verify that there are no destination rules that apply on the example services. we can do this by checking the host: value of existing destination rules and make sure they do not match. For example:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">kubectl get destinationrules.networking.istio.io --all-namespaces -o yaml | grep <span style="color:#e6db74">&#34;host:&#34;</span>
+</code></pre></div><p>Scopes</p>
+<p>In Istio, there are three levels of granularity through which we can define our mTLS settings. For each service, Istio applies the narrowest matching policy. The order is: workload-specific, namespace-wide, mesh-wide.</p>
+<ul>
+<li>Mesh-wide policy: A policy specified for the root namespace (Istio-namespace) without or with an empty selector field.</li>
+<li>Namespace-wide policy: A policy specified for a non-root namespace without or with an empty selector field.</li>
+<li>Workload-specific policy: a policy defined in the regular namespace, with non-empty selector field.</li>
+</ul>
+<h2 id="globally-enabling-istio-mutual-tls-in-strict-mode">Globally enabling Istio mutual TLS in STRICT mode</h2>
+<p>While Istio automatically upgrades all traffic between the proxies and the workloads to mutual TLS, workloads can still receive plain text traffic. To prevent non-mutual TLS traffic for the whole mesh, set a mesh-wide peer authentication policy with the mutual TLS mode set to STRICT. The mesh-wide peer authentication policy should not have a selector and must be applied in the root namespace, for example:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">kubectl apply -f - <span style="color:#e6db74">&lt;&lt;EOF
+</span><span style="color:#e6db74">apiVersion: &#34;security.istio.io/v1beta1&#34;
+</span><span style="color:#e6db74">kind: &#34;PeerAuthentication&#34;
+</span><span style="color:#e6db74">metadata:
+</span><span style="color:#e6db74">  name: &#34;default&#34;
+</span><span style="color:#e6db74">  namespace: &#34;istio-system&#34;
+</span><span style="color:#e6db74">spec:
+</span><span style="color:#e6db74">  mtls:
+</span><span style="color:#e6db74">    mode: STRICT
+</span><span style="color:#e6db74">EOF</span>
+
+peerauthentication.security.istio.io/default created
+</code></pre></div><p>This peer authentication policy configures workloads to only accept requests encrypted with TLS. Since it doesn’t specify a value for the selector field, the policy applies to all workloads in the mesh.</p>
+<p>Let&rsquo;s try initiate communication between between sleep service that exist in deprecated name-space to httpbin service that exist in default name-space.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#66d9ef">for</span> from in <span style="color:#e6db74">&#34;deprecated&#34;</span>; <span style="color:#66d9ef">do</span> <span style="color:#66d9ef">for</span> to in <span style="color:#e6db74">&#34;default&#34;</span>; 
+<span style="color:#66d9ef">do</span> kubectl exec <span style="color:#e6db74">&#34;</span><span style="color:#66d9ef">$(</span>kubectl get pod -l app<span style="color:#f92672">=</span>sleep -n <span style="color:#e6db74">${</span>from<span style="color:#e6db74">}</span> -o jsonpath<span style="color:#f92672">={</span>.items..metadata.name<span style="color:#f92672">}</span><span style="color:#66d9ef">)</span><span style="color:#e6db74">&#34;</span> 
+-c sleep -n <span style="color:#e6db74">${</span>from<span style="color:#e6db74">}</span> -- curl <span style="color:#e6db74">&#34;http://httpbin.</span><span style="color:#e6db74">${</span>to<span style="color:#e6db74">}</span><span style="color:#e6db74">:8000/ip&#34;</span> -s -o /dev/null -w <span style="color:#e6db74">&#34;sleep.</span><span style="color:#e6db74">${</span>from<span style="color:#e6db74">}</span><span style="color:#e6db74"> to httpbin.</span><span style="color:#e6db74">${</span>to<span style="color:#e6db74">}</span><span style="color:#e6db74">: %{http_code}\n&#34;</span>; <span style="color:#66d9ef">done</span>; 
+<span style="color:#66d9ef">done</span>
+
+sleep.deprecated to httpbin.default: <span style="color:#ae81ff">000</span>
+command terminated with exit code <span style="color:#ae81ff">56</span>
+You now seeing the request has been failed due to the nature of services that haven<span style="color:#e6db74">&#39;t enovy-proxy side-car (sleep.deprecated) , can&#39;</span>t communicate with with proxies services inside the mesh. <span style="color:#f92672">(</span>httpbin.default<span style="color:#f92672">)</span>
+</code></pre></div><p>This is expected because mutual TLS is now strictly required and only workload accepts secure communication within https, but the workload without sidecar cannot comply.</p>
+<p>on contrary if sleep.default initiate communication with httpbin.default , the connection will be successed.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#66d9ef">for</span> from in <span style="color:#e6db74">&#34;default&#34;</span>; <span style="color:#66d9ef">do</span> <span style="color:#66d9ef">for</span> to in <span style="color:#e6db74">&#34;default&#34;</span>; <span style="color:#66d9ef">do</span> kubectl exec <span style="color:#e6db74">&#34;</span><span style="color:#66d9ef">$(</span>kubectl get pod -l 
+app<span style="color:#f92672">=</span>sleep -n <span style="color:#e6db74">${</span>from<span style="color:#e6db74">}</span> -o jsonpath<span style="color:#f92672">={</span>.items..metadata.name<span style="color:#f92672">}</span><span style="color:#66d9ef">)</span><span style="color:#e6db74">&#34;</span> 
+-c sleep -n <span style="color:#e6db74">${</span>from<span style="color:#e6db74">}</span> -- curl <span style="color:#e6db74">&#34;http://httpbin.</span><span style="color:#e6db74">${</span>to<span style="color:#e6db74">}</span><span style="color:#e6db74">:8000/ip&#34;</span> -s -o /dev/null -w <span style="color:#e6db74">&#34;sleep.</span><span style="color:#e6db74">${</span>from<span style="color:#e6db74">}</span><span style="color:#e6db74"> to httpbin.</span><span style="color:#e6db74">${</span>to<span style="color:#e6db74">}</span><span style="color:#e6db74">: %{http_code}\n&#34;</span>; 
+<span style="color:#66d9ef">done</span>; <span style="color:#66d9ef">done</span>
+
+sleep.default to httpbin.default: <span style="color:#ae81ff">200</span>
+Remove global authentication policy and destination rules added in the session.
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">kubectl delete peerauthentication -n istio-system default
+</code></pre></div><h2 id="ensure-sniffing-attack-is-mitigated">Ensure sniffing attack is mitigated</h2>
+<p>After migrating all clients traffic to be encrypted to Istio and injecting the Envoy sidecar in default name-space, we can initiate connections between services-workloads and ensure in the default namespace to only accept mutual TLS traffic.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#66d9ef">for</span> from in <span style="color:#e6db74">&#34;deprecated&#34;</span> <span style="color:#e6db74">&#34;default&#34;</span>; <span style="color:#66d9ef">do</span> <span style="color:#66d9ef">for</span> to in <span style="color:#e6db74">&#34;default&#34;</span> <span style="color:#e6db74">&#34;deprecated&#34;</span>; <span style="color:#66d9ef">do</span> kubectl 
+exec <span style="color:#e6db74">&#34;</span><span style="color:#66d9ef">$(</span>kubectl get pod -l app<span style="color:#f92672">=</span>sleep -n <span style="color:#e6db74">${</span>from<span style="color:#e6db74">}</span> -o jsonpath<span style="color:#f92672">={</span>.items..metadata.name<span style="color:#f92672">}</span><span style="color:#66d9ef">)</span><span style="color:#e6db74">&#34;</span> 
+-c sleep -n <span style="color:#e6db74">${</span>from<span style="color:#e6db74">}</span> -- curl <span style="color:#e6db74">&#34;http://httpbin.</span><span style="color:#e6db74">${</span>to<span style="color:#e6db74">}</span><span style="color:#e6db74">:8000/ip&#34;</span> -s -o /dev/null -w <span style="color:#e6db74">&#34;sleep.</span><span style="color:#e6db74">${</span>from<span style="color:#e6db74">}</span><span style="color:#e6db74"> to httpbin.</span><span style="color:#e6db74">${</span>to<span style="color:#e6db74">}</span><span style="color:#e6db74">: %{http_code}\n&#34;</span>; 
+<span style="color:#66d9ef">done</span>; <span style="color:#66d9ef">done</span>
+
+sleep.deprecated to httpbin.default: <span style="color:#ae81ff">000</span>
+command terminated with exit code <span style="color:#ae81ff">56</span>
+sleep.deprecated to httpbin.deprecated: <span style="color:#ae81ff">200</span>
+sleep.default to httpbin.default: <span style="color:#ae81ff">200</span>
+sleep.default to httpbin.deprecated: <span style="color:#ae81ff">200</span>
+</code></pre></div><p>Suppose attacker was compromised a workload inside default namespace and trying to sniffing on network packets between microservices network interface hoping for compromising critical data.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">kubectl exec -n default <span style="color:#e6db74">&#34;</span><span style="color:#66d9ef">$(</span>kubectl get pod -n default -lapp<span style="color:#f92672">=</span>httpbin -ojsonpath<span style="color:#f92672">={</span>.items..metadata.name<span style="color:#f92672">}</span><span style="color:#66d9ef">)</span><span style="color:#e6db74">&#34;</span> -c istio-proxy -- sudo tcpdump dst port <span style="color:#ae81ff">80</span>  -A
+
+tcpdump: verbose output suppressed, use -v or -vv <span style="color:#66d9ef">for</span> full protocol decode
+listening on eth0, link-type EN10MB <span style="color:#f92672">(</span>Ethernet<span style="color:#f92672">)</span>, capture size <span style="color:#ae81ff">2324</span> bytes
+</code></pre></div><p>You will see plain text and encrypted text in the output when requests are sent from sleep.deprecated.</p>
+<h2 id="enable-mutual-tls-per-namespace-or-workload">Enable mutual TLS per namespace or workload</h2>
+<h4 id="namespace-wide-policy">Namespace-wide policy</h4>
+<p>To change mutual TLS for all workloads within a particular namespace, use a namespace-wide policy. The specification of the policy is the same as for a mesh-wide policy, but you specify the namespace it applies to under metadata. For example, the following peer authentication policy enables strict mutual TLS for the default namespace:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">kubectl apply -f - <span style="color:#e6db74">&lt;&lt;EOF
+</span><span style="color:#e6db74">apiVersion: &#34;security.istio.io/v1beta1&#34;
+</span><span style="color:#e6db74">kind: &#34;PeerAuthentication&#34;
+</span><span style="color:#e6db74">metadata:
+</span><span style="color:#e6db74">  name: &#34;peer-authentication-policy-namespace-wide&#34;
+</span><span style="color:#e6db74">  namespace: &#34;default&#34;
+</span><span style="color:#e6db74">spec:
+</span><span style="color:#e6db74">  mtls:
+</span><span style="color:#e6db74">    mode: STRICT
+</span><span style="color:#e6db74">EOF</span>
+peerauthentication.security.istio.io/peer-authentication-policy-namespace-wide
+</code></pre></div><p>As this policy is applied on workloads in namespace default only, you should see only request from client-without-sidecar (sleep.deprecated) to httpbin.default start to fail.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#66d9ef">for</span> from in <span style="color:#e6db74">&#34;deprecated&#34;</span> <span style="color:#e6db74">&#34;default&#34;</span>; <span style="color:#66d9ef">do</span> <span style="color:#66d9ef">for</span> to in <span style="color:#e6db74">&#34;deprecated&#34;</span> <span style="color:#e6db74">&#34;default&#34;</span>; <span style="color:#66d9ef">do</span> 
+kubectl exec <span style="color:#e6db74">&#34;</span><span style="color:#66d9ef">$(</span>kubectl get pod -l app<span style="color:#f92672">=</span>sleep -n <span style="color:#e6db74">${</span>from<span style="color:#e6db74">}</span> -o jsonpath<span style="color:#f92672">={</span>.items..metadata.name<span style="color:#f92672">}</span><span style="color:#66d9ef">)</span><span style="color:#e6db74">&#34;</span> 
+-c sleep -n <span style="color:#e6db74">${</span>from<span style="color:#e6db74">}</span> -- curl <span style="color:#e6db74">&#34;http://httpbin.</span><span style="color:#e6db74">${</span>to<span style="color:#e6db74">}</span><span style="color:#e6db74">:8000/ip&#34;</span> -s -o /dev/null -w <span style="color:#e6db74">&#34;sleep.</span><span style="color:#e6db74">${</span>from<span style="color:#e6db74">}</span><span style="color:#e6db74"> to httpbin.</span><span style="color:#e6db74">${</span>to<span style="color:#e6db74">}</span><span style="color:#e6db74">: %{http_code}\n&#34;</span>; 
+<span style="color:#66d9ef">done</span>; <span style="color:#66d9ef">done</span>
+
+sleep.deprecated to httpbin.deprecated: <span style="color:#ae81ff">200</span>
+sleep.deprecated to httpbin.default: <span style="color:#ae81ff">000</span>
+command terminated with exit code <span style="color:#ae81ff">56</span>
+sleep.default to httpbin.deprecated: <span style="color:#ae81ff">200</span>
+sleep.default to httpbin.default: <span style="color:#ae81ff">200</span>
+</code></pre></div><h4 id="mutual-tls-per-workload-policy">Mutual TLS per workload policy</h4>
+<p>To set a peer authentication policy for a specific workload, you must configure the selector section and specify the labels that match the desired workload. However, Istio cannot aggregate workload-level policies for outbound mutual TLS traffic to a service. Configure a destination rule to manage that behavior.</p>
+<p>For example, the following peer authentication policy and destination rule enable strict mutual TLS for the httpbin.default workload:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">kubectl apply  -f - <span style="color:#e6db74">&lt;&lt;EOF   
+</span><span style="color:#e6db74">apiVersion: &#34;security.istio.io/v1beta1&#34;
+</span><span style="color:#e6db74">kind: &#34;PeerAuthentication&#34;
+</span><span style="color:#e6db74">metadata:
+</span><span style="color:#e6db74">  name: &#34;peer-authentication-workload-wide-httpbin&#34;
+</span><span style="color:#e6db74">  namespace: &#34;default&#34;
+</span><span style="color:#e6db74">spec:
+</span><span style="color:#e6db74">  selector:
+</span><span style="color:#e6db74">    matchLabels:
+</span><span style="color:#e6db74">      app: httpbin
+</span><span style="color:#e6db74">  mtls:
+</span><span style="color:#e6db74">    mode: STRICT
+</span><span style="color:#e6db74">EOF</span>
+peerauthentication.security.istio.io/peer-authentication-workload-wide-httpbin created
+</code></pre></div><p>And a destination rule:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">cat <span style="color:#e6db74">&lt;&lt;EOF | kubectl apply  -f -
+</span><span style="color:#e6db74">apiVersion: &#34;networking.istio.io/v1alpha3&#34;
+</span><span style="color:#e6db74">kind: &#34;DestinationRule&#34;
+</span><span style="color:#e6db74">metadata:
+</span><span style="color:#e6db74">  name: &#34;httpbin&#34;
+</span><span style="color:#e6db74">spec:
+</span><span style="color:#e6db74">  host: &#34;httpbin.default.svc.cluster.local&#34;
+</span><span style="color:#e6db74">  trafficPolicy:
+</span><span style="color:#e6db74">    tls:
+</span><span style="color:#e6db74">      mode: ISTIO_MUTUAL
+</span><span style="color:#e6db74">EOF</span>
+destinationrule.networking.istio.io/httpbin created
+</code></pre></div><p>Again, run the probing command. As expected, request from sleep.deprecated to httpbin.default starts failing with the same reasons.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#66d9ef">for</span> from in <span style="color:#e6db74">&#34;deprecated&#34;</span>; <span style="color:#66d9ef">do</span> <span style="color:#66d9ef">for</span> to in <span style="color:#e6db74">&#34;default&#34;</span>; <span style="color:#66d9ef">do</span> kubectl exec <span style="color:#e6db74">&#34;</span><span style="color:#66d9ef">$(</span>kubectl get pod -l app<span style="color:#f92672">=</span>sleep 
+-n <span style="color:#e6db74">${</span>from<span style="color:#e6db74">}</span> -o jsonpath<span style="color:#f92672">={</span>.items..metadata.name<span style="color:#f92672">}</span><span style="color:#66d9ef">)</span><span style="color:#e6db74">&#34;</span> -c sleep -n <span style="color:#e6db74">${</span>from<span style="color:#e6db74">}</span> -- curl <span style="color:#e6db74">&#34;http://httpbin.</span><span style="color:#e6db74">${</span>to<span style="color:#e6db74">}</span><span style="color:#e6db74">:8000/ip&#34;</span> -s 
+-o /dev/null -w <span style="color:#e6db74">&#34;sleep.</span><span style="color:#e6db74">${</span>from<span style="color:#e6db74">}</span><span style="color:#e6db74"> to httpbin.</span><span style="color:#e6db74">${</span>to<span style="color:#e6db74">}</span><span style="color:#e6db74">: %{http_code}\n&#34;</span>; 
+<span style="color:#66d9ef">done</span>; <span style="color:#66d9ef">done</span>
+
+sleep.deprecated to httpbin.default: <span style="color:#ae81ff">000</span>
+command terminated with exit code <span style="color:#ae81ff">56</span>
+</code></pre></div><h2 id="summary">Summary:</h2>
+<p>This tutorial discussed how mutual TLS authentication works in Istio for service-to-service authentication. To enable mutual TLS in Istio, you need to define authentication policies for services at a workload-specific level, namespace level, or mesh-wide scope. An peer authentication policy defines what kind of traffic a service receives.</p>
+<p>You also need to define destination rules. A DestinationRule object is an important part of Istio’s traffic routing functionality. It defines what happens to the traffic destined for a target service (of which defining the TLS settings for authentication is one part of it).</p>
+<p>In addition to mutual TLS or transport authentication, Istio also supports origin authentication (also known as end-user authentication), where Istio authenticates the clients that make requests. Currently, Istio only supports origin authentication using JSON Web Tokens to authenticate client requests.</p>
+
+    </div>
+    
+      
+    
+
+    
+      
+        
+
+      
+    
+  </div>
+
+      </div>
+
+      
+        <footer class="footer">
+  <div class="footer__inner">
+    
+      <a
+  href="https://ahmedameenaim.github.io/ahmedamin.github.io"
+  class="logo"
+  style="text-decoration: none;"
+>
+  
+    <span class="logo__mark"><svg xmlns="http://www.w3.org/2000/svg" class="greater-icon" viewBox="0 0 44 44">
+  <path fill="none" d="M15 8l14.729 14.382L15 35.367" />
+</svg>
+</span>
+    <span class="logo__text"
+      >Welcome to the Rabbit Hole</span
+    >
+    <span class="logo__cursor"></span>
+  
+</a>
+
+      <div class="copyright">
+        <span
+          >© 2021 Powered by
+          <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a></span
+        >
+        <span
+          >Theme created by
+          <a href="https://twitter.com/panr" target="_blank" rel="noopener">panr</a></span
+        >
+      </div>
+    
+  </div>
+</footer>
+
+<script src="https://ahmedameenaim.github.io/ahmedamin.github.io/assets/main.js"></script>
+<script src="https://ahmedameenaim.github.io/ahmedamin.github.io/assets/prism.js"></script>
+
+
+      
+    </div>
+
+    
+  </body>
+</html>
